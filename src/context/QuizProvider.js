@@ -66,12 +66,30 @@ function QuizProvider({children}) {
     useReducer(reducer, initialState);
   const numQuestion = questions.length;
   const maxPossiablePoints = questions.reduce((prev, curr) => prev + curr.points, 0);
-  useEffect(function () {
-    fetch("http://localhost:9000/questions")
-      .then((res) => res.json())
-      .then((data) => dispatch({ type: "loading", payload: data }))
-      .catch((err) => dispatch({ type: "error" }));
-  }, []);
+  // useEffect(function () {
+  //   fetch("http://localhost:9000/questions")
+  //     .then((res) => res.json())
+  //     .then((data) => dispatch({ type: "loading", payload: data }))
+  //     .catch((err) => dispatch({ type: "error" }));
+  // }, []);
+
+
+  useEffect(() => {
+  async function fetchQuestions() {
+    try {
+      const res = await fetch("/data/questions.json"); // Netlify correct path
+      if (!res.ok) throw new Error("Failed to load JSON");
+
+      const data = await res.json();
+      dispatch({ type: "dataReceived", payload: data.questions }); 
+    } catch (err) {
+      dispatch({ type: "dataFailed" });
+    }
+  }
+
+  fetchQuestions();
+}, []);
+
 
   return (
     <QuizContext.Provider
