@@ -2,6 +2,7 @@ import { useQuiz } from "../context/QuizProvider";
 
 function Progress() {
   const { index, numQuestion, points, maxPossiablePoints, answer } = useQuiz();
+  console.log(maxPossiablePoints);
   return (
     <header className="progress">
       <progress max={numQuestion} value={index + Number(answer !== null)} />
