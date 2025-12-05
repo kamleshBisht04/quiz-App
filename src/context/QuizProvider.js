@@ -44,7 +44,6 @@ function reducer(state, action) {
         ...state,
         status: "finished",
         highscore: state.points > state.highscore ? state.points : state.highscore,
-      
       };
     case "restart":
       return { ...initialState, questions: state.questions, status: "ready" };
@@ -61,11 +60,12 @@ function reducer(state, action) {
   }
 }
 
-function QuizProvider({children}) {
+function QuizProvider({ children }) {
   const [{ questions, status, index, answer, points, highscore, secondRemaining }, dispatch] =
     useReducer(reducer, initialState);
   const numQuestion = questions.length;
   const maxPossiablePoints = questions.reduce((prev, curr) => prev + curr.points, 0);
+
   // useEffect(function () {
   //   fetch("http://localhost:9000/questions")
   //     .then((res) => res.json())
@@ -73,23 +73,21 @@ function QuizProvider({children}) {
   //     .catch((err) => dispatch({ type: "error" }));
   // }, []);
 
-
   useEffect(() => {
-  async function fetchQuestions() {
-    try {
-      const res = await fetch("/data/questions.json"); // Netlify correct path
-      if (!res.ok) throw new Error("Failed to load JSON");
+    async function fetchQuestions() {
+      try {
+        const res = await fetch("/questions.json"); // Netlify correct path
+        if (!res.ok) throw new Error("Failed to load JSON");
 
-      const data = await res.json();
-      dispatch({ type: "dataReceived", payload: data.questions }); 
-    } catch (err) {
-      dispatch({ type: "dataFailed" });
+        const data = await res.json();
+        dispatch({ type: "loading", payload: data.questions });
+      } catch (err) {
+        dispatch({ type: "error" });
+      }
     }
-  }
 
-  fetchQuestions();
-}, []);
-
+    fetchQuestions();
+  }, []);
 
   return (
     <QuizContext.Provider
