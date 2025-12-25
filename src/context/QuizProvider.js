@@ -15,6 +15,8 @@ const initialState = {
   secondRemaining: null,
 };
 
+// reducer function
+
 function reducer(state, action) {
   switch (action.type) {
     case "loading":
